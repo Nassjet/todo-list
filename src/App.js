@@ -1,47 +1,33 @@
-// src/TodoApp.js
-import { useState, useEffect } from "react";
-import { db } from "./firebaseconfig.js";
-import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from "firebase/firestore";
+import { useState } from "react";
 import './TodoApp.css';
 
+// Composant principal de l'application
 function TodoAPP() {
-  const [tasks, setTasks] = useState([]);
-  const [filter, setFilter] = useState("all");
-  const [user, setUser] = useState(null);
+  const [tasks, setTasks] = useState([]); // État pour les tâches
+  const [filter, setFilter] = useState("all"); // État pour le filtre
+  const [user, setUser] = useState(null); // État pour l'utilisateur actuel
 
-  const tasksCollectionRef = collection(db, "tasks");
-
-  // Fonction pour récupérer les tâches depuis Firestore
-  useEffect(() => {
-    const getTasks = async () => {
-      const data = await getDocs(tasksCollectionRef);
-      setTasks(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-    };
-    getTasks();
-  }, []);
-
-  const addTask = async (task) => {
-    const trimmedTask = task.length > 200 ? task.slice(0, 200) : task;
-    const newTask = { text: trimmedTask, completed: false };
-    await addDoc(tasksCollectionRef, newTask);
-    setTasks([...tasks, newTask]);
+  // Fonction pour ajouter une tâche
+  const addTask = (task) => {
+    const trimmedTask = task.length > 200 ? task.slice(0, 200) : task; // Limiter le texte à 200 caractères
+    setTasks([...tasks, { text: trimmedTask, completed: false }]);
   };
 
-  const toggleTaskCompletion = async (index) => {
-    const taskDoc = doc(db, "tasks", tasks[index].id);
-    const updatedTask = { ...tasks[index], completed: !tasks[index].completed };
-    await updateDoc(taskDoc, updatedTask);
-    const updatedTasks = tasks.map((task, i) => (i === index ? updatedTask : task));
+  // Fonction pour basculer l'état d'accomplissement d'une tâche
+  const toggleTaskCompletion = (index) => {
+    const updatedTasks = tasks.map((task, i) =>
+      i === index ? { ...task, completed: !task.completed } : task
+    );
     setTasks(updatedTasks);
   };
 
-  const deleteTask = async (index) => {
-    const taskDoc = doc(db, "tasks", tasks[index].id);
-    await deleteDoc(taskDoc);
+  // Fonction pour supprimer une tâche
+  const deleteTask = (index) => {
     const updatedTasks = tasks.filter((_, i) => i !== index);
     setTasks(updatedTasks);
   };
 
+  // Filtrer les tâches en fonction du filtre sélectionné
   const filteredTasks = tasks.filter(task => {
     if (filter === "all") return true;
     if (filter === "completed") return task.completed;
@@ -53,13 +39,13 @@ function TodoAPP() {
     <div className="todo-app">
       <h1>To-do list</h1>
       {!user ? (
-        <Login setUser={setUser} />
+        <Login setUser={setUser} /> /* Composant de connexion */
       ) : (
         <>
-          <div>Bonjour, {user.name} ({user.role})</div>
-          <button onClick={() => setUser(null)}>Déconnexion</button>
-          {user.role === "admin" && <AjoutTodo addTask={addTask} />}
-          <FilterButtons setFilter={setFilter} />
+          <div>Bonjour, {user.name} ({user.role})</div> {/* Afficher l'utilisateur actuel */}
+          <button onClick={() => setUser(null)}>Déconnexion</button> {/* Bouton de déconnexion */}
+          {user.role === "admin" && <AjoutTodo addTask={addTask} />} {/* Seuls les admins peuvent ajouter des tâches */}
+          <FilterButtons setFilter={setFilter} /> {/* Composant pour les boutons de filtre */}
           <ul>
             {filteredTasks.map((task, index) => (
               <Task
@@ -77,13 +63,14 @@ function TodoAPP() {
   );
 }
 
-function AjoutTodo ({ addTask }) {
+// Composant pour ajouter une nouvelle tâche
+function AjoutTodo({ addTask }) {
   const [newTask, setNewTask] = useState("");
 
   const handleAddTask = () => {
-    if (newTask.trim()) {
+    if (newTask.trim()) { // Vérifie que la tâche n'est pas vide
       addTask(newTask);
-      setNewTask("");
+      setNewTask(""); // Réinitialise le champ d'entrée
     }
   };
 
@@ -94,13 +81,14 @@ function AjoutTodo ({ addTask }) {
         value={newTask}
         onChange={(e) => setNewTask(e.target.value)}
         placeholder="Ajouter une tâche"
-        maxLength="200"
+        maxLength="200" // Limite d'entrée à 200 caractères
       />
       <button onClick={handleAddTask}>Ajouter une tâche</button>
     </>
   );
 }
 
+// Composant pour les boutons de filtre
 function FilterButtons({ setFilter }) {
   return (
     <div className="filter-buttons">
@@ -111,37 +99,43 @@ function FilterButtons({ setFilter }) {
   );
 }
 
+// Composant pour afficher une tâche
 function Task({ task, index, toggleTaskCompletion, deleteTask }) {
+  // Fonction pour formater le texte de la tâche avec des retours à la ligne
   const formatTaskText = (text) => {
-    const maxLineLength = 30;
+    const maxLineLength = 30; // Nombre de caractères avant retour à la ligne
     const regex = new RegExp(`(.{1,${maxLineLength}})`, 'g');
     return text.match(regex).join('<br />');
   };
 
   return (
     <li>
+      {/* Utiliser dangerouslySetInnerHTML pour insérer des retours à la ligne */}
       <span
         className={`task-text ${task.completed ? 'completed' : ''}`}
         onClick={() => toggleTaskCompletion(index)}
         dangerouslySetInnerHTML={{ __html: formatTaskText(task.text) }}
       >
       </span>
-      {task.completed && <DeleteButton deleteTask={() => deleteTask(index)} />}
+      {task.completed && <DeleteButton deleteTask={() => deleteTask(index)} />} {/* Affiche le bouton de suppression si la tâche est complétée */}
     </li>
   );
 }
 
+// Composant pour le bouton de suppression d'une tâche
 function DeleteButton({ deleteTask }) {
   return (
     <button className="delete-button" onClick={deleteTask}>Supprimer</button>
   );
 }
 
+// Composant de connexion
 function Login({ setUser }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLogin = () => {
+    // Simuler une authentification
     if (username === "admin" && password === "admin") {
       setUser({ name: "Admin", role: "admin" });
     } else if (username === "user" && password === "user") {
