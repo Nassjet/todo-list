@@ -1,0 +1,106 @@
+/* Styles pour le conteneur principal */
+body {
+    font-family: Arial, sans-serif; /* Police de caractères */
+    background-color: #f4f4f9; /* Couleur de fond */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Hauteur de la fenêtre */
+  }
+  
+  .todo-app {
+    background-color: white; /* Couleur de fond de l'application */
+    padding: 20px; /* Padding intérieur */
+    border-radius: 8px; /* Coins arrondis */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Ombre portée */
+    width: 300px; /* Largeur de l'application */
+  }
+  
+  h1 {
+    font-size: 24px; /* Taille de la police */
+    margin-bottom: 20px; /* Marge en bas */
+    color: #333; /* Couleur du texte */
+    text-align: center; /* Centre le texte */
+  }
+  
+  input[type="text"] {
+    width: calc(100% - 22px); /* Largeur de l'entrée */
+    padding: 10px; /* Padding intérieur */
+    margin-bottom: 10px; /* Marge en bas */
+    border: 1px solid #ccc; /* Bordure */
+    border-radius: 4px; /* Coins arrondis */
+  }
+  
+  button {
+    width: 100%; /* Largeur du bouton */
+    padding: 10px; /* Padding intérieur */
+    border: none; /* Pas de bordure */
+    border-radius: 4px; /* Coins arrondis */
+    background-color: #5cb85c; /* Couleur de fond */
+    color: white; /* Couleur du texte */
+    font-size: 16px; /* Taille de la police */
+    cursor: pointer; /* Curseur pointeur */
+    transition: background-color 0.3s ease; /* Transition de la couleur de fond */
+  }
+  
+  button:hover {
+    background-color: #4cae4c; /* Couleur de fond au survol */
+  }
+  
+  ul {
+    list-style: none; /* Pas de puces */
+    padding: 0; /* Pas de padding */
+  }
+  
+  li {
+    padding: 10px; /* Padding intérieur */
+    border-bottom: 1px solid #ccc; /* Bordure en bas */
+    display: flex; /* Affichage en flex */
+    justify-content: space-between; /* Espacement entre les éléments */
+    align-items: center; /* Alignement vertical */
+  }
+  
+  li:last-child {
+    border-bottom: none; /* Pas de bordure en bas pour le dernier élément */
+  }
+  
+  li span.task-text {
+    cursor: pointer; /* Curseur pointeur */
+    flex-grow: 1; /* Prend tout l'espace disponible */
+  }
+  
+  li span.task-text.completed {
+    text-decoration: line-through; /* Texte barré */
+  }
+  
+  button.delete-button {
+    background-color: #d9534f; /* Couleur de fond du bouton de suppression */
+    margin-left: 10px; /* Marge à gauche */
+    padding: 5px 10px; /* Padding intérieur */
+    flex-shrink: 0; /* Ne rétrécit pas */
+  }
+  
+  button.delete-button:hover {
+    background-color: #c9302c; /* Couleur de fond au survol */
+  }
+  
+  .filter-buttons {
+    display: flex; /* Affichage en flex */
+    justify-content: space-between; /* Espacement entre les boutons */
+    margin-bottom: 10px; /* Marge en bas */
+  }
+  
+  .filter-buttons button {
+    width: 30%; /* Largeur des boutons de filtre */
+    background-color: #f4f4f9; /* Couleur de fond des boutons de filtre */
+    color: #333; /* Couleur du texte */
+    border: 1px solid #ccc; /* Bordure */
+    transition: background-color 0.3s ease; /* Transition de la couleur de fond */
+  }
+  
+  .filter-buttons button:hover {
+    background-color: #ddd; /* Couleur de fond au survol */
+  }
+  
